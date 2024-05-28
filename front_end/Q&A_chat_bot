@@ -23,7 +23,6 @@ client = OpenAI()
 
 # Function to perform inference on a local image
 def infer_local_image(image_path):
-    #breakpoint()
     with open(image_path, "rb") as image_file:
         response = requests.post(ROBOFLOW_URL, files={"file": image_file})
     result = response.json()
@@ -31,20 +30,28 @@ def infer_local_image(image_path):
 
 # Function to get care tips using OpenAI GPT-3
 def get_care_tips(plant_class):
-
-
     completion = client.chat.completions.create(
-    model="gpt-3.5-turbo-16k",
-    messages=[
-    {"role": "system", "content": "You are in a role of plant expert."},
-    {"role": "user", "content": f"Give me useful advice for taking care for this plant: {plant_class}"}
-  ]
-)
+        model="gpt-3.5-turbo-16k",
+        messages=[
+            {"role": "system", "content": "You are in the role of a plant expert. You are witty and wise."},
+            {"role": "user", "content": f"Give me useful advice for taking care of this plant: {plant_class}"}
+        ]
+    )
+    return completion.choices[0].message.content
 
+# Function to handle user questions using OpenAI GPT-3
+def handle_user_question(plant_class, user_question):
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo-16k",
+        messages=[
+            {"role": "system", "content": f"You are in the role of a plant expert. You are witty and wise. You have given care tips for a {plant_class}."},
+            {"role": "user", "content": f"{user_question}"}
+        ]
+    )
     return completion.choices[0].message.content
 
 # Example for local image
-local_image_path = "raw_data/Begonia_rex.jpg"
+local_image_path = "raw_data/Monstera_1.jpeg"
 local_result = infer_local_image(local_image_path)
 
 # Get the class of the plant
@@ -55,6 +62,14 @@ if local_result['predictions']:
     # Get care tips for the detected plant class
     care_tips = get_care_tips(plant_class)
     print(f"Care tips for {plant_class}: {care_tips}")
+
+    # Interactive chat loop
+    while True:
+        user_question = input("Ask a question about the plant care or type 'exit' to quit: ")
+        if user_question.lower() == 'exit':
+            break
+        answer = handle_user_question(plant_class, user_question)
+        print(f"Answer: {answer}")
 
 else:
     print("No plants detected.")
