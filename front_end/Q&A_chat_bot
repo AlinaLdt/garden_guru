@@ -43,36 +43,6 @@ def get_care_tips(plant_class):
 
     return completion.choices[0].message.content
 
-    #prompt = f"Plant: {plant_class}\nCare tips:"
-    #response = openai.Completion.create(
-    #    engine="davinci",
-    #    prompt=prompt,
-    #    max_tokens=100
-    #)
-    #care_tips = response.choices[0].text
-    #return care_tips
-
-
-# Function to draw bounding boxes on the image
-# def draw_bbox(image_path, detections):
-#     image = Image.open(image_path)
-#     draw = ImageDraw.Draw(image)
-
-#     for detection in detections:
-#         bbox = detection["bbox"]
-#         class_name = detection["class"]
-#         confidence = detection["confidence"]
-#         x, y, w, h = bbox["x"], bbox["y"], bbox["width"], bbox["height"]
-#         left = x - w / 2
-#         top = y - h / 2
-#         right = x + w / 2
-#         bottom = y + h / 2
-#         draw.rectangle(((left, top), (right, bottom)), outline="red", width=2)
-#         text = f"{class_name}: {confidence:.2f}"
-#         draw.text((left, top), text, fill="red")
-
-#     image.show()
-
 # Example for local image
 local_image_path = "raw_data/Begonia_rex.jpg"
 local_result = infer_local_image(local_image_path)
@@ -86,12 +56,5 @@ if local_result['predictions']:
     care_tips = get_care_tips(plant_class)
     print(f"Care tips for {plant_class}: {care_tips}")
 
-    # Draw bounding boxes on the image
-    # draw_bbox(local_image_path, local_result['predictions'])
-
-    # Display image with bounding box
-    # img = np.asarray(Image.open(local_image_path))
-    # plt.imshow(img)
-    # plt.show()
 else:
     print("No plants detected.")
